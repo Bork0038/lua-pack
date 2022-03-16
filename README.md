@@ -1,6 +1,6 @@
 # lua-pack
 
-lua-pack is an advanced lua bundler written in js that makes working on large scale projects easy and fast.
+lua-pack is an advanced lua bundler made for lua 5.1+ written in js that makes working on large scale projects easy and fast.
 
 # features
 
@@ -60,13 +60,18 @@ end
 
 3. open the source folder 
 
-4. run the build script
+4. install the node modules
+     
+    ```bash
+    npm i
+    ```
+5. run the build script
 
    ```bash
    npm run build
    ```
 
-5. add that folder to your windows PATH [(tutorial)](https://www.architectryan.com/2018/03/17/add-to-the-path-on-windows-10/)
+6. add that folder to your windows PATH [(tutorial)](https://www.architectryan.com/2018/03/17/add-to-the-path-on-windows-10/)
 
 # usage
 
