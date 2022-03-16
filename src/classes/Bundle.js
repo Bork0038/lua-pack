@@ -4,6 +4,7 @@ const luamin = require('../../lua/luamin');
 const util   = require('../../util');
 const fs     = require('fs');
 
+const output = new util.StdOut();
 class Bundle {
     constructor(config) {
         this.config = config;
