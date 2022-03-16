@@ -1,0 +1,28 @@
+{
+	"name": "luapack",
+	"version": "1.0.0",
+	"description": "",
+	"main": "index.js",
+	"scripts": {
+		"build": "pkg -t win ./cli/index.js --config package.json --public-packages"
+	},
+	"keywords": [],
+	"author": "",
+	"license": "ISC",
+	"dependencies": {
+		"chalk": "4.1.2",
+		"express": "^4.17.3",
+		"uuid": "^8.3.2"
+	},
+	"pkg": {
+		"assets": [
+			"cli/*",
+			"cli/**/*",
+			"util/*",
+			"lua/*",
+			"src/*",
+			"src/**/*",
+			"package.json"
+		]
+	}
+}
