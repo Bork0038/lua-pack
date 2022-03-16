@@ -1,1 +1,104 @@
 # lua-pack
+
+lua-pack is an advanced lua bundler written in js that makes working on large scale projects easy and fast.
+
+# features
+
+lua-pack has many unique features to make your life easier.
+
+## string literal caching
+
+if enabled, repeated use of the same string literals will cause the bundler to automatically localize them to save on storage space
+
+```lua
+print("test")
+local b = "test"
+local c = "test"
+
+-- string literal caching enabled
+local a = "test"
+print(a)
+local b = a
+local c = a
+```
+
+## instruction optimization
+
+when enabled, any large repetition of instructions will automatically be put in a for loop in the output
+
+```lua
+print("test")
+print("test")
+print("test")
+print("test")
+
+-- instruction optimization enabled
+for i = 1, 4 do
+    print("test")
+end
+```
+
+# installation
+
+## installing pre-built release
+
+1. download the .zip file from the releases page
+2. unpack that .zip file to any folder on your computer
+3. add that folder to your windows PATH [(tutorial)](https://www.architectryan.com/2018/03/17/add-to-the-path-on-windows-10/)
+
+## building from source
+
+***must have node.js installed***
+
+1. open cmd
+
+2. install pkg
+
+   ```bash
+    npm i -g pkg
+   ```
+
+3. open the source folder 
+
+4. run the build script
+
+   ```bash
+   npm run build
+   ```
+
+5. add that folder to your windows PATH [(tutorial)](https://www.architectryan.com/2018/03/17/add-to-the-path-on-windows-10/)
+
+# usage
+
+## initialize project
+
+to start your project start by making a new folder which will contain all your lua files then open a terminal in that folder and run
+
+```bash
+luapack init
+```
+
+it will first ask for what the name of the project and then for which of the files is going to be the entry/main file and then go through all the options for you to select.
+
+## building project
+
+you can build your project in two different ways directly building it and serving it to a webserver.
+
+### build
+
+by running the following, it will output the build into a newly created folder inside your project folder
+
+```bash
+luapack build
+```
+
+### serve
+
+serving the project will allow for hot updating the build every time a script is changed and host that build on your localhost to allow easy testing of your code.
+
+```bash
+luapack serve
+```
+
+after running the command it will build your script and put it on the first open port it can find on your localhost, from then on every time you make a change or add a source file it will create a new build and update the site
+
