@@ -74,6 +74,16 @@ end
 6. add that folder to your windows PATH [(tutorial)](https://www.architectryan.com/2018/03/17/add-to-the-path-on-windows-10/)
 
 # usage
+to define a module in your project the first line must be like the following
+```lua
+_NAME = "module name here";
+
+return { whatever = true };
+```
+to load that module in any other source file you can just call the load function
+```lua
+local module = load("module name here");
+print(module.whatever);```
 
 ## initialize project
 
