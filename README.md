@@ -83,7 +83,8 @@ return { whatever = true };
 to load that module in any other source file you can just call the load function
 ```lua
 local module = load("module name here");
-print(module.whatever);```
+print(module.whatever);
+```
 
 ## initialize project
 
