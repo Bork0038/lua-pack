@@ -142,9 +142,26 @@ end
 ----------------------------------------------------------------------
 -- check for existence of a token, throws error if not found
 ----------------------------------------------------------------------
+local compounds = {
+  ["..="] = true,
+  ["+="] = true,
+  ["-="] = true,
+  ["*="] = true,
+  ["/="] = true,
+  ["%="] = true,
+  ["^="] = true
+}
 
 local function check(c)
-  if tok ~= c then error_expected(c) end
+  if c == '=' and tok ~= '=' then
+     if not toklist[tpos] or (tok == '.' and (toklist[tpos] ~= '.' or toklist[tpos + 1] ~= '=')) or (not compounds[tok .. toklist[tpos]]) then
+       error_expected(c);
+     else
+        tpos = tpos + (tok == '.' and 2 or 1);
+     end
+  else 
+    if tok ~= c then error_expected(c) end
+  end
 end
 
 ----------------------------------------------------------------------

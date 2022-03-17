@@ -1,3 +1,7 @@
 local sample = load("sample module");
 
-print(sample.test())
+local a = 1;
+a += 1
+
+local b = ""
+b ..= "test"

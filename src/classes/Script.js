@@ -13,24 +13,29 @@ class Script extends AST {
         this.source  = source;
         this.config  = config;
         this.path    = path;
+        
+        const body = this.tokens.body;
+
+        if (!isEntry) {
+            if ((!body[0] || body[0].type != 'AssignmentStatement' || body[0].init[0].type != 'StringLiteral' || body[0].variables[0].name != '_NAME')) {
+                output.error(`Invalid module signature for module ${this.path}`)
+            } else {
+                this.moduleName = body.shift().init[0].raw.slice(1, -1);
+            }
+        }
     }
 
     async init() {
+        if (!this.moduleName) return;
+
         const body = this.tokens.body;
-
-        if (!body[0] || body[0].type != 'AssignmentStatement' || body[0].init[0].type != 'StringLiteral' || body[0].variables[0].name != '_NAME') {
-            output.error(`Invalid module signature for module ${this.path}`)
-            return {};
-        }
-        const moduleName = body.shift().init[0].raw.slice(1, -1);
-
         const { status, data } =  await util.minify(this.source);
         if (!status) {
             output.error(`Failed to beautify script ${this.path}\n\t${data}`);
             return process.exit();
         } else {
             return {
-                name: moduleName,
+                name: this.moduleName,
                 source: data
             }   
         }

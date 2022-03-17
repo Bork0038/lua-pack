@@ -122,4 +122,5 @@ async function minify(source) {
         })
     })
 }
+
 module.exports.minify = minify;

@@ -19,7 +19,7 @@ class AST {
                     str += this.serialize(token.variables[i], level, token) + (i != token.variables.length - 1 ? ', ' : '');
 
                 
-                str += token.init.length == 0 ? ';\n' : ' = ';
+                str += token.init.length == 0 ? ';\n' : ` ${token.operator || '='} `;
                 for (let i = 0; i < token.init.length; i++)
                     str += this.serialize(token.init[i], level, token) + (i != token.init.length - 1 ? ', ' : ';\n');
 

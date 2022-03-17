@@ -317,9 +317,10 @@
         };
       }
   
-      , assignmentStatement: function(variables, init) {
+      , assignmentStatement: function(variables, init, operator) {
         return {
-            type: 'AssignmentStatement'
+            type: 'AssignmentStatement',
+            operator
           , variables: variables
           , init: init
         };
@@ -741,6 +742,7 @@
           if (isDecDigit(next)) return scanNumericLiteral();
           if (46 === next) {
             if (46 === input.charCodeAt(index + 2)) return scanVarargLiteral();
+            if (61 === input.charCodeAt(index + 2)) return scanPunctuator('..=');
             return scanPunctuator('..');
           }
           return scanPunctuator('.');
@@ -786,14 +788,17 @@
         case 38: case 124: // & |
           if (!features.bitwiseOperators)
             break;
-  
+
+        case 43: case 94: case 37: case 45: case 43:
+          if (61 === next) return scanPunctuator(input.charAt(index) + '=');
+          return scanPunctuator(input.charAt(index));
+
           /* fall through */
         case 42: case 94: case 37: case 44: case 123: case 125:
         case 93: case 40: case 41: case 59: case 35: case 45:
         case 43: // * ^ % , { } ] ( ) ; # - +
           return scanPunctuator(input.charAt(index));
       }
-  
       return unexpected(input.charAt(index));
     }
   
@@ -2208,8 +2213,20 @@
       } else if (!lvalue) {
         return unexpected(token);
       }
-  
-      expect('=');
+
+      const compounds = [
+        '+=', '-=', '*=',
+        '/=', '%=', '^=',
+        '..=',
+      ]
+      let op;
+      if (compounds.includes(token.value)) {
+        op = token.value;
+        expect(token.value);
+      } else {
+        op = '='
+        expect('=');
+      }
   
       var values = [];
   
@@ -2218,7 +2235,7 @@
       } while (consume(','));
   
       pushLocation(startMarker);
-      return finishNode(ast.assignmentStatement(targets, values));
+      return finishNode(ast.assignmentStatement(targets, values, op));
     }
   
     // ### Non-statements

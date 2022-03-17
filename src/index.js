@@ -42,6 +42,10 @@ class LuaPack {
         return scripts;
     }
 
+    #replaceRelativePath(chunk, toReplace, replacement) {
+        
+    }
+
     async pack() {
         const bundle = new Bundle(this.config);
 
@@ -49,6 +53,7 @@ class LuaPack {
         if (this.config.prelude) {
             bundle.setPrelude(path.join(this.config.directory, this.config.prelude));
         }
+
 
         for (let script of await this.loadScripts()) {
             if (!script.isEntry) {
