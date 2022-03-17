@@ -10,6 +10,7 @@ class Bundle {
         this.config = config;
 
         this.source =  this.source = `local load = setmetatable({}, {__call = function(a,b) return a[b] end, __index = function(a, b) error("Cannot find module " .. b) end})\n\n`;
+        this.modules = [];
     }
 
     setPrelude(path) {
@@ -21,6 +22,11 @@ class Bundle {
     }
 
     addModule(name, source) {
+        if (this.modules.includes(name)) {
+            output.warning(`There are more than one module with the name "${name}"`);
+        }
+        this.modules.push(name);
+
         this.source += `do load["${name}"] = (function() ${source} end)() end\n`
     }
 
@@ -158,7 +164,7 @@ class Bundle {
         if (this.prelude) {
             this.source = `${fs.readFileSync(this.prelude, 'utf-8')}\n${this.source}`;
         }
-        
+
         let out = '';
         if (this.config.options.minifyOutput) {
             const { status, data } = await util.minify(this.source);
