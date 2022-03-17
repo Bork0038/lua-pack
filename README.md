@@ -2,6 +2,52 @@
 
 lua-pack is an advanced lua bundler made for lua 5.1+ written in js that makes working on large scale projects easy and fast.
 
+# usage
+to define a module in your project the first line must be like the following
+```lua
+_NAME = "module name here";
+
+return { whatever = true };
+```
+to load that module in any other source file you can just call the load function
+```lua
+local module = load("module name here");
+print(module.whatever);
+```
+
+## initialize project
+
+to start your project start by making a new folder which will contain all your lua files then open a terminal in that folder and run
+
+```bash
+luapack init
+```
+
+it will first ask for what the name of the project and then for which of the files is going to be the entry/main file and then go through all the options for you to select.
+
+## building project
+
+you can build your project in two different ways directly building it and serving it to a webserver.
+
+### build
+
+by running the following, it will output the build into a newly created folder inside your project folder
+
+```bash
+luapack build
+```
+
+### serve
+
+serving the project will allow for hot updating the build every time a script is changed and host that build on your localhost to allow easy testing of your code.
+
+```bash
+luapack serve
+```
+
+after running the command it will build your script and put it on the first open port it can find on your localhost, from then on every time you make a change or add a source file it will create a new build and update the site
+
+
 # features
 
 lua-pack has many unique features to make your life easier.
@@ -72,49 +118,3 @@ end
    ```
 
 6. add that folder to your windows PATH [(tutorial)](https://www.architectryan.com/2018/03/17/add-to-the-path-on-windows-10/)
-
-# usage
-to define a module in your project the first line must be like the following
-```lua
-_NAME = "module name here";
-
-return { whatever = true };
-```
-to load that module in any other source file you can just call the load function
-```lua
-local module = load("module name here");
-print(module.whatever);
-```
-
-## initialize project
-
-to start your project start by making a new folder which will contain all your lua files then open a terminal in that folder and run
-
-```bash
-luapack init
-```
-
-it will first ask for what the name of the project and then for which of the files is going to be the entry/main file and then go through all the options for you to select.
-
-## building project
-
-you can build your project in two different ways directly building it and serving it to a webserver.
-
-### build
-
-by running the following, it will output the build into a newly created folder inside your project folder
-
-```bash
-luapack build
-```
-
-### serve
-
-serving the project will allow for hot updating the build every time a script is changed and host that build on your localhost to allow easy testing of your code.
-
-```bash
-luapack serve
-```
-
-after running the command it will build your script and put it on the first open port it can find on your localhost, from then on every time you make a change or add a source file it will create a new build and update the site
-
