@@ -25,14 +25,15 @@ class LuaPack {
 
         function scanDirectory(directory, config, start) {
             for (let file of fs.readdirSync(directory)) {
-                const stats = fs.statSync(path.join(directory, file));
+                const currentFile = path.join(directory, file);
+                const stats = fs.statSync(currentFile);
 
                 if (stats.isFile() && file.endsWith('.lua')) {
-                    const isEntry = directory == start && file == config.entry;
+                    const isEntry = currentFile == path.join(start, config.entry) || (config.prelude && currentFile == path.join(start, config.prelude));
 
-                    scripts.push(new Script(path.join(directory, file), config, isEntry));
+                    scripts.push(new Script(currentFile, config, isEntry));
                 } else if (stats.isDirectory() && !(file == 'build' && directory == start)) {
-                    scanDirectory(path.join(directory, file), config, start);
+                    scanDirectory(currentFile, config, start);
                 }
             }
         }
@@ -45,6 +46,10 @@ class LuaPack {
         const bundle = new Bundle(this.config);
 
         bundle.setEntry(path.join(this.config.directory, this.config.entry));
+        if (this.config.prelude) {
+            bundle.setPrelude(path.join(this.config.directory, this.config.prelude));
+        }
+
         for (let script of await this.loadScripts()) {
             if (!script.isEntry) {
                 const { name, source } = await script.init();

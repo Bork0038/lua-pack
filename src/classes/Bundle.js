@@ -12,6 +12,10 @@ class Bundle {
         this.source =  this.source = `local load = setmetatable({}, {__call = function(a,b) return a[b] end, __index = function(a, b) error("Cannot find module " .. b) end})\n\n`;
     }
 
+    setPrelude(path) {
+        this.prelude = path;
+    }
+
     setEntry(path) {
         this.entry = path;
     }
@@ -151,7 +155,10 @@ class Bundle {
         }
 
         this.source = ((this.config.options.cacheStringLiterals && this.cacheLiterals.length != 0) ? str : '') + ast.compile();
-
+        if (this.prelude) {
+            this.source = `${fs.readFileSync(this.prelude, 'utf-8')}\n${this.source}`;
+        }
+        
         let out = '';
         if (this.config.options.minifyOutput) {
             const { status, data } = await util.minify(this.source);
