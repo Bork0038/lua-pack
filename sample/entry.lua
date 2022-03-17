@@ -5,3 +5,5 @@ a += 1
 
 local b = ""
 b ..= "test"
+
+print{"test"}

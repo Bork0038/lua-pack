@@ -39,7 +39,7 @@ class AST {
                 break;
 
             case 'ElseClause':
-                str += '\t'.repeat(level) + 'else\n'
+                str += '\t'.repeat(level) + 'else\n';
                 str += this.compile(token.body, level + 1, token);
                 break;
 
@@ -53,10 +53,14 @@ class AST {
 
                 if (token.expression.type == 'StringCallExpression') {
                     str += this.serialize(token.expression.argument);
+                } else if (token.expression.type == 'TableCallExpression') {
+                    str += this.serialize(token.expression.arguments)
                 } else {
-                    for (let i = 0; i < token.expression.arguments.length; i++)
+                    for (let i = 0; i < token.expression.arguments.length; i++) {
                         str += this.serialize(token.expression.arguments[i], level, token) + (i != token.expression.arguments.length - 1 ? ', ' : '');            
+                    }
                 }
+
                 str += ')\n';
 
                 break;
@@ -67,6 +71,7 @@ class AST {
                 str += ')';
 
                 break;
+
             case 'CallExpression':
                 if (token.base.type == "FunctionDeclaration" || token.base.type == "StringLiteral") {
                     str += `(${this.serialize(token.base, level, token)})(`;
@@ -98,7 +103,6 @@ class AST {
                 for (let i = 0; i < token.fields.length; i++)
                     str += this.serialize(token.fields[i], level, token) + (i != token.fields.length - 1 ? ', ' : '');
                 str += '}'
-
                 break;
 
             case 'TableValue': 
