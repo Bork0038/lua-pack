@@ -22,6 +22,7 @@ class Script extends AST {
             output.error(`Invalid module signature for module ${this.path}`)
             return {};
         }
+        const moduleName = body.shift().init[0].raw.slice(1, -1);
 
         const { status, data } =  await util.minify(this.source);
         if (!status) {
@@ -29,7 +30,7 @@ class Script extends AST {
             return process.exit();
         } else {
             return {
-                name: body.shift().init[0].raw.slice(1, -1),
+                name: moduleName,
                 source: data
             }   
         }

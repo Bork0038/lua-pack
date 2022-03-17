@@ -1,0 +1,1 @@
+local e={"sample module"}local t=setmetatable({},{__call=function(t,e)return t[e]end,__index=function(t,e)error((("Cannot find module ")..e))end})do t[e[1]]=(function()_NAME=e[1]local e={}function e.test()return("This is a working module")end return e end)()end local e=t(e[1])print(e.test())

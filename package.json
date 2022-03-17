@@ -4,7 +4,7 @@
 	"description": "",
 	"main": "index.js",
 	"scripts": {
-		"build": "pkg -t win ./cli/index.js --config package.json --public-packages"
+		"build": "pkg -t win ./cli/index.js --config package.json"
 	},
 	"keywords": [],
 	"author": "",

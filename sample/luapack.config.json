@@ -1,0 +1,9 @@
+{
+    "name": "sample project",
+    "entry": "entry.lua",
+    "options": {
+        "minifyOutput": true,
+        "cacheStringLiterals": true,
+        "optimizeInstructions": true
+    }
+}

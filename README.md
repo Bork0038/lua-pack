@@ -4,7 +4,8 @@ lua-pack is an advanced lua bundler similar to webpack made for lua 5.1+ written
 it takes all the files in your project and packs them into a single production ready file.
 
 # usage
-to define a module in your project the first line must be like the following
+to define a module in your project the first line must be like the following.
+
 ```lua
 _NAME = "module name here";
 
