@@ -1,6 +1,7 @@
 # lua-pack
 
-lua-pack is an advanced lua bundler made for lua 5.1+ written in js that makes working on large scale projects easy and fast.
+lua-pack is an advanced lua bundler similar to webpack made for lua 5.1+ written in js that makes working on large scale projects easy and fast.
+it takes all the files in your project and packs them into a single production ready file.
 
 # usage
 to define a module in your project the first line must be like the following
