@@ -1,9 +1,5 @@
-local sample = load("sample module");
+local sample = load("./modules/relative_path.lua");
 
-local a = 1;
-a += 1
+print(load('sample module'))
 
-local b = ""
-b ..= "test"
-
-print{"test"}
+print(import("./a.txt"))

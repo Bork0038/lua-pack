@@ -1,5 +1,6 @@
 const Bundle = require('./classes/Bundle');
 const Script = require('./classes/Script');
+const File   = require('./classes/File');
 
 const util = require('../util');
 const path = require('path');
@@ -20,18 +21,32 @@ class LuaPack {
         return util.calcCompression(this.inputCharacters, this.outputCharacters);
     }
 
-    async loadScripts() {
-        const scripts = [];
+    async loadFiles() {
+        const files = {
+            scripts: [],
+            files: [],
+        };
 
         function scanDirectory(directory, config, start) {
             for (let file of fs.readdirSync(directory)) {
                 const currentFile = path.join(directory, file);
                 const stats = fs.statSync(currentFile);
 
-                if (stats.isFile() && file.endsWith('.lua')) {
-                    const isEntry = currentFile == path.join(start, config.entry) || (config.prelude && currentFile == path.join(start, config.prelude));
+                if (stats.isFile()) {
+                    const ext = file.split('.').pop();
+                    
+                    switch (ext) {
+                        case 'lua':
+                            const isEntry = currentFile == path.join(start, config.entry) || (config.prelude && currentFile == path.join(start, config.prelude));
 
-                    scripts.push(new Script(currentFile, config, isEntry));
+                            files.scripts.push(new Script(currentFile, config, isEntry));
+                            break;
+
+                        default:
+                            if (file != 'luapack.config.json')
+                                files.files.push(new File(path.join(directory, file), config));
+                            break;
+                    }
                 } else if (stats.isDirectory() && !(file == 'build' && directory == start)) {
                     scanDirectory(currentFile, config, start);
                 }
@@ -39,11 +54,7 @@ class LuaPack {
         }
         scanDirectory(this.directory, this.config, this.directory);
 
-        return scripts;
-    }
-
-    #replaceRelativePath(chunk, toReplace, replacement) {
-        
+        return files;
     }
 
     async pack() {
@@ -54,13 +65,17 @@ class LuaPack {
             bundle.setPrelude(path.join(this.config.directory, this.config.prelude));
         }
 
+        const { scripts, files } = await this.loadFiles();
+        for (let file of files) {
+            bundle.addFile(file);
+        }
 
-        for (let script of await this.loadScripts()) {
+        for (let script of scripts) {
             if (!script.isEntry) {
                 const { name, source } = await script.init();
 
                 if (name && source)
-                    bundle.addModule(name, source);
+                    bundle.addModule(name, source, script.path.replace(this.config.directory, ''));
             }
             
             this.inputCharacters += script.source.length;

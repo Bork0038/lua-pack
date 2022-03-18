@@ -27,6 +27,9 @@ module.exports = {
         const inst = await question('Optimize instructions? (Y/N): ');
         config.options.optimizeInstructions = inst.toLowerCase() == 'y';
 
+        const relative = await question('Allow Relative Paths? (Y/N): ');
+        config.options.enableRelativePaths = relative.toLowerCase() == 'y';
+
         fs.writeFileSync(path.join(directory, 'luapack.config.json'), JSON.stringify(config, null, 4));
 
         if (!fs.existsSync(path.join(directory, config.entry))) {

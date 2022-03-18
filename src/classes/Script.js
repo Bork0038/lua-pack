@@ -13,7 +13,7 @@ class Script extends AST {
         this.source  = source;
         this.config  = config;
         this.path    = path;
-        
+
         const body = this.tokens.body;
 
         if (!isEntry) {
@@ -22,11 +22,18 @@ class Script extends AST {
             } else {
                 this.moduleName = body.shift().init[0].raw.slice(1, -1);
             }
+            body[0] = null;
         }
     }
 
     async init() {
         if (!this.moduleName) return;
+
+        if (!this.isEntry) {
+            const sections = this.source.split("\n");
+            sections.shift();
+            this.source = sections.join("\n");
+        }
 
         const body = this.tokens.body;
         const { status, data } =  await util.minify(this.source);

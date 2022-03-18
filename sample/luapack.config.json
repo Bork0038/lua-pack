@@ -3,8 +3,9 @@
     "entry": "entry.lua",
     "prelude": "prelude.lua",
     "options": {
-        "minifyOutput": true,
+        "minifyOutput": false,
         "cacheStringLiterals": true,
-        "optimizeInstructions": true
+        "optimizeInstructions": true,
+        "enableRelativePaths": true
     }
 }

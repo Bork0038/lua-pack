@@ -7,10 +7,101 @@ const fs     = require('fs');
 const output = new util.StdOut();
 class Bundle {
     constructor(config) {
+        if (this.config.options.enableRelativePaths == null) {
+            this.config.options.enableRelativePaths = true;
+        }
+        
         this.config = config;
 
-        this.source =  this.source = `local load = setmetatable({}, {__call = function(a,b) return a[b] end, __index = function(a, b) error("Cannot find module " .. b) end})\n\n`;
+        this.source = `
+        local moduleDictionary = {};
+        ${(
+            this.config.options.enableRelativePaths ?
+            `
+            local function split(path)
+                local sections = {};
+                for section in path:gmatch('[^/]+') do
+                    table.insert(sections, section)
+                end
+                return sections
+            end
+
+            local pathCache = {};
+            local function joinPath(start, path)
+                local pathId = start .. "|" .. path;
+                if pathCache[pathId] then
+                    return pathCache[pathId];
+                end
+
+                local output = start;
+                
+                for token in path:gmatch('[^/]+') do
+                    local sections = split(output);
+
+                    if token == '.' then
+                        if sections[#sections]:sub(-4, -1) == ".lua" then
+                            table.remove(sections);
+                        end
+                    elseif token == '..' then
+                        if sections[#sections]:sub(-4, -1) == ".lua" then
+                            table.remove(sections);
+                            table.remove(sections);
+                        end
+                    else 
+                        table.insert(sections, token);
+                    end
+
+                    output = #sections > 0 and "/" .. table.concat(sections, '/') or '/';
+                end
+
+                pathCache[pathId] = output;
+                return output;
+            end
+            `
+            : ''
+        )}
+
+        local load = setmetatable({}, {
+            __call = function(a, b)
+                return a[b]
+            end, 
+            __index = function(a, b)
+                ${(
+                    this.config.options.enableRelativePaths ?
+                    `
+                    local moduleName =  moduleDictionary[joinPath(getfenv(2)._PATH, b)];
+                    if moduleName then
+                        return rawget(a, moduleName);
+                    end
+
+                    `
+                    : ''
+                )}
+                error("Cannot find module. If the path is relative relative paths must be enabled in the config." .. b);
+            end
+        })
+
+        local import = setmetatable({}, {
+            __call = function(a,b)
+                return a[b];
+            end,
+            __index = function(a, b)
+                ${(
+                    this.config.options.enableRelativePaths ?
+                    `
+                    local file = rawget(a, joinPath(getfenv(2)._PATH, b));
+                    if file then
+                        return file;
+                    end
+                    `
+                    : ''
+                )}
+                error("Cannot load file. If the path is relative relative paths must be enabled in the config." .. b);
+            end
+        })
+    `
         this.modules = [];
+        this.files = [];
     }
 
     setPrelude(path) {
@@ -21,14 +112,41 @@ class Bundle {
         this.entry = path;
     }
 
-    addModule(name, source) {
+    addModule(name, source, path) {
         if (this.modules.includes(name)) {
             output.warning(`There are more than one module with the name "${name}"`);
         }
         this.modules.push(name);
 
-        this.source += `do load["${name}"] = (function() ${source} end)() end\n`
+        name = name.split('"').join('\"');
+        name = name.split('\\').join('\\\\');
+        this.source += `
+        do 
+            load["${name}"] = (function()
+                _NAME="${name}";
+                ${
+                    this.config.options.enableRelativePaths ?
+                    `
+                        _PATH="${path.replace(this.config.directory, '').split("\\").join("/")}";
+                        moduleDictionary[_PATH] = _NAME;
+                    `
+                    : ''
+                }
+                ${source} 
+            end)() 
+        end\n`
     }
+
+    addFile(file) {
+        if (this.files.includes(file.relative)) {
+            output.warning(`There are more than one module with the path "${file.relative}"`);
+        }
+        this.files.push(file.relative);
+
+        this.source += `import["${file.relative}"] = ${file.toLua()};\n`
+    }
+
+
 
     countStringLiterals(token) {
         if (token == null)
@@ -129,7 +247,17 @@ class Bundle {
     }
 
     async assemble() {
-        this.source += `\n${fs.readFileSync(this.entry, 'utf-8')}`;
+        this.source += `
+        do
+            ${
+                this.config.options.enableRelativePaths ?
+                `
+                    _PATH="${this.entry.replace(this.config.directory, '').split("\\").join("/")}";
+                ` 
+                : ''
+            }
+            ${fs.readFileSync(this.entry, 'utf-8')}
+        end`;
 
         const ast = new AST(this.source);
         let str = '';
@@ -162,14 +290,25 @@ class Bundle {
 
         this.source = ((this.config.options.cacheStringLiterals && this.cacheLiterals.length != 0) ? str : '') + ast.compile();
         if (this.prelude) {
-            this.source = `${fs.readFileSync(this.prelude, 'utf-8')}\n${this.source}`;
+            this.source = `
+            do 
+                ${
+                    this.config.options.enableRelativePaths ?
+                    `
+                        _PATH="${this.prelude.replace(this.config.directory, '').split("\\").join("/")}"
+                    ` 
+                    : ''
+                }
+                ${fs.readFileSync(this.prelude, 'utf-8')}
+            end
+            ${this.source}`;
         }
 
         let out = '';
         if (this.config.options.minifyOutput) {
             const { status, data } = await util.minify(this.source);
             if (!status) {
-                output.error(`Failed to beautify package\n\t${data}`);
+                output.error(`Failed to minify package\n\t${data}`);
                 return process.exit();
             } else {
                 out = data;

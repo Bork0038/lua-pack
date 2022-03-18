@@ -5240,7 +5240,6 @@ luaminp.Minify = function(scr, options) {
     StripAst(ast)
 
     let result = PrintAst(ast)
-    result = `${watermark}\n\n${result}`
 
     return result
 }
@@ -5259,7 +5258,6 @@ luaminp.Beautify = function(scr, options) {
     FormatAst(ast)
 
     let result = PrintAst(ast)
-    result = `${watermark}\n\n${result}`
 
     return result
 }
