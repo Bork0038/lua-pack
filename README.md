@@ -54,6 +54,42 @@ after running the command it will build your script and put it on the first open
 
 lua-pack has many unique features to make your life easier.
 
+## file importing and relative paths
+
+you can easily import any file and interact between the files in your project.
+
+### relative file paths
+
+luapack allows you to use relative file paths when loading modules and importing files. let's say you are want to load a module name by file name in the same directory you can do something like the following.
+
+```lua
+local module = load('./module.lua') -- load file via relative path
+local module2 = load('../folder/module2.lua') -- load file from up a directory
+```
+**relative paths can be disabled**.
+when relative paths are disabled file based paths are relative to the project folder instead of the current file. to disabled them change "enableRelativePaths" in your luapack.config.json file to false
+
+### importing files
+
+all files in the project folder are automatically bundled into the project for ease of use. let's say your file structure looks like the following :
+
+```
+project
+|-folder
+| |-sample.txt
+| `-test.json
+`-main.lua
+```
+
+to load both files from inside of main.lua all you have to dos
+
+```lua
+local sampleTxt = import('./folder/sample.txt')
+local testJson  = import('./folder/test.json') -- json files are automatically converted to lua tables on compilation so you can directly index them after importing
+```
+
+
+
 ## string literal caching
 
 if enabled, repeated use of the same string literals will cause the bundler to automatically localize them to save on storage space
@@ -109,7 +145,7 @@ end
 3. open the source folder 
 
 4. install the node modules
-     
+   
     ```bash
     npm i
     ```
