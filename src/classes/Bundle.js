@@ -7,12 +7,12 @@ const fs     = require('fs');
 const output = new util.StdOut();
 class Bundle {
     constructor(config) {
+        this.config = config;
+
         if (this.config.options.enableRelativePaths == null) {
             this.config.options.enableRelativePaths = true;
         }
         
-        this.config = config;
-
         this.source = `
         local moduleDictionary = {};
         ${(

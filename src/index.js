@@ -43,11 +43,11 @@ class LuaPack {
                             break;
 
                         default:
-                            if (file != 'luapack.config.json')
+                            if (file != 'luapack.config.json' && !file.startsWith('.'))
                                 files.files.push(new File(path.join(directory, file), config));
                             break;
                     }
-                } else if (stats.isDirectory() && !(file == 'build' && directory == start)) {
+                } else if (stats.isDirectory() && !(file == 'build' && directory == start) && !file.startsWith('.')) {
                     scanDirectory(currentFile, config, start);
                 }
             }

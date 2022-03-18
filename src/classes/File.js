@@ -59,11 +59,7 @@ class File {
             case 'json':
                 return this.#jsonToLua(this.content);
             default:
-                let str = '"';
-                for (let i = 0; i < this.content.length; i++) {
-                    str += `\\${this.content.codePointAt(i)}`;
-                }
-                return str + '"';
+               return `"${this.content.split('"').join('\\"')}"`;
         }
     }
 }
