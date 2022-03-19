@@ -88,7 +88,8 @@ local sampleTxt = import('./folder/sample.txt')
 local testJson  = import('./folder/test.json') -- json files are automatically converted to lua tables on compilation so you can directly index them after importing
 ```
 
-
+## prelude
+adding the "prelude" variable to your config file will put the selected file before the modules get loaded in the package.
 
 ## string literal caching
 
