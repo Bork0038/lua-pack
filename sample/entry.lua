@@ -1,5 +1,10 @@
 local sample = load("./modules/relative_path.lua");
 
-load('sample module').test();
+local file = import('./test.txt');
+for i = 1, 255 do
+    local byte = file:sub(i,i):byte()
 
-print(import("./a.txt"))
+    if (byte ~= i) then
+        print(i, byte)
+    end
+end

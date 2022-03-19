@@ -67,7 +67,8 @@ class LuaPack {
 
         const { scripts, files } = await this.loadFiles();
         for (let file of files) {
-            bundle.addFile(file);
+            this.inputCharacters += file.content.length;
+            await bundle.addFile(file);
         }
 
         for (let script of scripts) {

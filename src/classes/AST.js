@@ -2,7 +2,6 @@ const parser = require('../../lua/luaparse');
 
 class AST {
     constructor(source) {
-        console.log(source)
         this.tokens = parser.parse(source);
     }
 

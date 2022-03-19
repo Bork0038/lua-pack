@@ -79,6 +79,7 @@ class Bundle {
                 )}
                 error("Cannot find module. If the path is relative relative paths must be enabled in the config." .. b);
             end
+
         })
 
         local import = setmetatable({}, {
@@ -137,13 +138,13 @@ class Bundle {
         end\n`
     }
 
-    addFile(file) {
+    async addFile(file) {
         if (this.files.includes(file.relative)) {
             output.warning(`There are more than one module with the path "${file.relative}"`);
         }
         this.files.push(file.relative);
 
-        this.source += `import["${file.relative}"] = ${file.toLua()};\n`
+        this.source += `import["${file.relative}"] = ${await file.toLua()};\n`
     }
 
 
