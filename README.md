@@ -136,7 +136,7 @@ end
 1. open cmd
 2. install
     ```bash
-    scoop install https://raw.githubusercontent.com/Bork0038/lua-pack/main/scoop-manifest.json
+    scoop install https://raw.githubusercontent.com/Bork0038/lua-pack/main/luapack.json
     ```
 3. scoop shims should already be added to your windows PATH [(tutorial)](https://www.architectryan.com/2018/03/17/add-to-the-path-on-windows-10/), if they aren't then add `%UserProfile%\scoop\shims`
 
