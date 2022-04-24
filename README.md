@@ -145,7 +145,8 @@ end
 ***must have node.js installed***
 
 1. open cmd
-2. install pkg
+
+3. install pkg
 
    ```bash
     npm i -g pkg
