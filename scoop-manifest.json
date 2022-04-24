@@ -1,0 +1,16 @@
+{
+    "version": "1.0.8",
+    "description": "lua-pack is an advanced lua bundler similar to webpack made for lua 5.1+ written in js that makes working on large scale projects easy and fast. it takes all the files in your project and packs them into a single production ready file.",
+    "homepage": "https://github.com/Bork0038/lua-pack",
+    "license": "ISC",
+    "url": "https://github.com/Bork0038/lua-pack/releases/download/v1.0.8/lua.zip",
+    "hash": "6ff780be3e5139ced693e5c779d20b30c50911405f30b5f7a2ed7097d3052e50",
+    "bin": "luapack.exe",
+    "checkver": {
+        "regex": "/releases/tag/v\\.([\\d.]+)",
+        "url": "https://github.com/Bork0038/lua-pack/releases/latest"
+    },
+    "autoupdate": {
+        "url": "https://github.com/Bork0038/lua-pack/releases/download/v$version/lua.zip"
+    }
+}
