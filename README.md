@@ -146,7 +146,7 @@ end
 
 1. open cmd
 
-3. install pkg
+2. install pkg
 
    ```bash
     npm i -g pkg
