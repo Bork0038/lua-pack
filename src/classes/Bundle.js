@@ -61,23 +61,37 @@ class Bundle {
             : ''
         )}
 
+        local unloaded = {};
         local load = setmetatable({}, {
             __call = function(a, b)
                 return a[b]
             end, 
-            __index = function(a, b)
+            __index = function(self, name)
                 ${(
                     this.config.options.enableRelativePaths ?
                     `
-                    local moduleName =  moduleDictionary[joinPath(getfenv(2)._PATH, b)];
+                    local moduleName =  moduleDictionary[joinPath(getfenv(2)._PATH, name)];
                     if moduleName then
-                        return rawget(a, moduleName);
+                        local module = rawget(self, moduleName);
+                        if module then
+                            return module;
+                        elseif unloaded[moduleName] then
+                            local loaded = unloaded[moduleName]();
+                            rawset(self, moduleName, loaded);
+        
+                            return loaded;
+                        end
                     end
 
                     `
                     : ''
                 )}
-                error("Cannot find module. If the path is relative relative paths must be enabled in the config." .. b);
+                if unloaded[name] then
+                    local loaded = unloaded[name]();
+                    rawset(self, name, loaded);
+
+                    return loaded;
+                end
             end
 
         })
@@ -123,7 +137,7 @@ class Bundle {
         name = name.split('\\').join('\\\\');
         this.source += `
         do 
-            load["${name}"] = (function()
+            unloaded["${name}"] = (function()
                 _NAME="${name}";
                 ${
                     this.config.options.enableRelativePaths ?
@@ -133,8 +147,8 @@ class Bundle {
                     `
                     : ''
                 }
-                ${source} 
-            end)() 
+                ${source.split('\\').join('\\\\')} 
+            end)
         end\n`
     }
 
